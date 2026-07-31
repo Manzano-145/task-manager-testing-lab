@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Task } from '../types';
+import { createTaskFromTitle } from '../utils/createTaskFromTitle';
 
 export function useTaskList(initialTasks: Task[] = []) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -11,11 +12,7 @@ export function useTaskList(initialTasks: Task[] = []) {
       return;
     }
     setError(null);
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title: title.trim(),
-      status: 'pending',
-    };
+    const newTask = createTaskFromTitle(title, Date.now().toString());
     setTasks((prev) => [...prev, newTask]);
   };
 

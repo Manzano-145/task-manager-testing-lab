@@ -9,7 +9,13 @@ const mockTasks: Task[] = [
 ];
 
 describe('filterTasksByStatus', () => {
-  it('devuelve solo las tareas con el estado indicado', () => {
+  it('devuelve solo las tareas pendientes', () => {
+    const result = filterTasksByStatus(mockTasks, 'pending');
+    expect(result).toHaveLength(2);
+    expect(result.map((task) => task.title)).toContain('Comprar leche');
+  });
+
+  it('devuelve solo las tareas completadas', () => {
     const result = filterTasksByStatus(mockTasks, 'completed');
     expect(result).toHaveLength(2);
     expect(result[0].title).toBe('Estudiar React Native');
