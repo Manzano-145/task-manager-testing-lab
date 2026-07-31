@@ -1,5 +1,11 @@
-Repositorio:
+Repositorio base (docente):
 https://github.com/cristiandGutierrezb/task-manager-testing-lab.git
+
+Repositorio personal (fork — crear en GitHub):
+https://github.com/Manzano-145/task-manager-testing-lab.git
 
 Rama evaluada:
 actividad-2-pruebas
+
+Commit:
+a77ecb5
