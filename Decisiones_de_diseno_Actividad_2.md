@@ -4,7 +4,7 @@
 
 - **Actividad:** Pruebas unitarias, hooks y componentes en Task Manager
 - **Proyecto:** Task Manager (Expo + React Native)
-- **Repositorio:** https://github.com/cristiandGutierrezb/task-manager-testing-lab.git
+- **Repositorio (fork personal):** https://github.com/Manzano-145/task-manager-testing-lab.git
 - **Rama:** `actividad-2-pruebas`
 
 ## Alcance de las pruebas

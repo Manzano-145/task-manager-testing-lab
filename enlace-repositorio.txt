@@ -1,11 +1,11 @@
-Repositorio base (docente):
+Repositorio base (docente, remoto "upstream"):
 https://github.com/cristiandGutierrezb/task-manager-testing-lab.git
 
-Repositorio personal (fork — crear en GitHub):
+Repositorio personal (fork, remoto "origin"):
 https://github.com/Manzano-145/task-manager-testing-lab.git
 
 Rama evaluada:
 actividad-2-pruebas
 
 Commit:
-a77ecb5
+3c4a0b8
