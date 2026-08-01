@@ -2,12 +2,14 @@
 
 ## Identificación
 
-- **Estudiante:** _(completar nombre)_
-- **Actividad:** Pruebas unitarias, hooks y componentes en Task Manager
+- **Estudiante:** Joan Correa
+- **Actividad:** Actividad 2 — Suite de pruebas unitarias y de componentes (Task Manager)
 - **Proyecto:** Task Manager (Expo + React Native)
 - **Repositorio (fork personal):** https://github.com/Manzano-145/task-manager-testing-lab.git
+- **Enlace directo a la rama evaluada:** https://github.com/Manzano-145/task-manager-testing-lab/tree/actividad-2-pruebas
 - **Rama:** `actividad-2-pruebas`
-- **Fecha:** 31 de julio de 2026
+- **Commit entregado:** `e46de31`
+- **Fecha de entrega:** 31 de julio de 2026
 
 ## Alcance de las pruebas
 
@@ -57,3 +59,11 @@
 La suite incluye pruebas unitarias, de hooks, componentes, integración, contrato y accesibilidad. Todas las pruebas pasan de forma consistente y sin dependencias externas reales (red, almacenamiento o reloj del sistema), gracias al aislamiento con mocks y MSW descrito arriba.
 
 **Conclusión:** el proyecto supera el mínimo de 14 pruebas exigido por la actividad (58 implementadas) y las metas internas de cobertura, validando tanto la lógica de negocio pura como el comportamiento observable de hooks y componentes de interfaz.
+
+## Cumplimiento del producto esperado
+
+| Requisito del enunciado | Estado |
+|---|---|
+| Reporte de cobertura de Jest (carpeta `coverage/`) | ✔ Incluido en el repositorio |
+| Documento PDF ≤ 2 páginas con decisiones de diseño | ✔ Este documento |
+| Acceso al repositorio del proyecto | ✔ Rama publicada, ver enlace arriba |
