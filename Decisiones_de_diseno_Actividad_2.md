@@ -2,10 +2,12 @@
 
 ## Identificación
 
+- **Estudiante:** _(completar nombre)_
 - **Actividad:** Pruebas unitarias, hooks y componentes en Task Manager
 - **Proyecto:** Task Manager (Expo + React Native)
 - **Repositorio (fork personal):** https://github.com/Manzano-145/task-manager-testing-lab.git
 - **Rama:** `actividad-2-pruebas`
+- **Fecha:** 31 de julio de 2026
 
 ## Alcance de las pruebas
 
@@ -48,11 +50,10 @@
 
 ## Resultados
 
-Ejecutar localmente:
+- **Suites:** 15 aprobadas / 15 totales.
+- **Pruebas:** 58 aprobadas / 58 totales.
+- **Cobertura:** 91.75% statements · 88.88% branches · 89.47% functions · 92.5% lines (meta interna: 70%).
 
-```bash
-npm test -- --runInBand
-npx jest --coverage --runInBand
-```
+La suite incluye pruebas unitarias, de hooks, componentes, integración, contrato y accesibilidad. Todas las pruebas pasan de forma consistente y sin dependencias externas reales (red, almacenamiento o reloj del sistema), gracias al aislamiento con mocks y MSW descrito arriba.
 
-La suite incluye pruebas unitarias, de hooks, componentes, integración, contrato y accesibilidad.
+**Conclusión:** el proyecto supera el mínimo de 14 pruebas exigido por la actividad (58 implementadas) y las metas internas de cobertura, validando tanto la lógica de negocio pura como el comportamiento observable de hooks y componentes de interfaz.
