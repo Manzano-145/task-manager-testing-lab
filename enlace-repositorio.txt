@@ -8,4 +8,7 @@ Rama evaluada:
 actividad-2-pruebas
 
 Commit:
-3c4a0b8
+e08e656
+
+Enlace directo a la rama:
+https://github.com/Manzano-145/task-manager-testing-lab/tree/actividad-2-pruebas
