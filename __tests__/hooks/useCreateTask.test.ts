@@ -1,22 +1,29 @@
 import { act, renderHook, waitFor } from '@testing-library/react-native';
 import { useCreateTask } from '../../src/hooks/useCreateTask';
-import { createTask } from '../../src/services/taskService';
+import { createTask, fetchTasks } from '../../src/services/taskService';
 
 // Se simula taskService para validar la lógica del hook sin depender
 // de la red ni del almacenamiento real del dispositivo.
 jest.mock('../../src/services/taskService', () => ({
   createTask: jest.fn(),
+  fetchTasks: jest.fn(),
 }));
 
 const mockCreateTask = createTask as jest.MockedFunction<typeof createTask>;
+const mockFetchTasks = fetchTasks as jest.MockedFunction<typeof fetchTasks>;
 
 describe('useCreateTask', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFetchTasks.mockResolvedValue([]);
   });
 
   it('inicia con lista vacía y estado idle', async () => {
     const { result } = await renderHook(() => useCreateTask());
+
+    await waitFor(() => {
+      expect(mockFetchTasks).toHaveBeenCalled();
+    });
 
     expect(result.current.tasks).toEqual([]);
     expect(result.current.status).toBe('idle');
