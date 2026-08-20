@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Actividad 4</title>
+<style>
+  @page { size: A4; margin: 1.6cm 1.8cm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    color: #111;
+    margin: 0;
+  }
+  h1 { font-size: 15pt; margin: 0 0 4pt 0; }
+  h2 { font-size: 13pt; margin: 12pt 0 4pt 0; border-bottom: 1px solid #999; padding-bottom: 2pt; }
+  p { margin: 4pt 0; }
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0; font-size: 10.5pt; line-height: 1.3; }
+  th, td { border: 1px solid #bbb; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+  th { background: #eee; }
+  code { font-family: Consolas, monospace; font-size: 10pt; background: #f2f2f2; padding: 1pt 3pt; }
+  .meta { font-size: 11pt; margin: 2pt 0; }
+  .note { font-size: 10.5pt; font-style: italic; color: #333; margin: 4pt 0; }
+  .badge-ok { color: #1a7a1a; font-weight: bold; }
+  .badge-warn { color: #a06a00; font-weight: bold; }
+  .badge-no { color: #a01a1a; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Actividad 4 — Rendimiento, seguridad, contrato de API y CI/CD</h1>
+<p class="meta"><b>Estudiante:</b> Joan Sebastian Correa M &nbsp;|&nbsp; <b>Repositorio:</b> github.com/Manzano-145/task-manager-testing-lab &nbsp;|&nbsp; <b>Rama:</b> actividad-4-qa</p>
+<p class="note">Nota de transparencia: el repositorio base del docente ya incluía scaffolding relacionado con esta actividad (esquema Zod, un primer test de contrato y el workflow de CI), verificado con <code>git log</code> (intactos desde el commit inicial). Este informe distingue explícitamente qué se reutilizó tal cual y qué se agregó como trabajo propio.</p>
+
+<h2>1. Análisis de rendimiento</h2>
+<p>Medido sobre el AVD <code>ACTIVIDAD_4</code> (Android Studio), build debug generado con <code>npx expo run:android</code>, usando <code>adb</code> directo (sin herramientas de terceros).</p>
+<table>
+<tr><th>Métrica</th><th>Método</th><th>Resultado</th></tr>
+<tr><td>Tiempo de arranque en frío</td><td><code>adb shell am start -W</code> tras <code>am force-stop</code>, 3 corridas</td><td>1232&nbsp;/&nbsp;1173&nbsp;/&nbsp;1176&nbsp;ms → <b>promedio 1.19&nbsp;s</b></td></tr>
+<tr><td>Uso de memoria (PSS)</td><td><code>adb shell dumpsys meminfo com.taskmanager.app</code> tras carga inicial</td><td><b>~121&nbsp;MB</b> (TOTAL PSS 123&nbsp;919&nbsp;KB; Native Heap 10.5&nbsp;MB, Dalvik Heap 6.1&nbsp;MB)</td></tr>
+</table>
+<p><b>Cuello de botella:</b> 1.19&nbsp;s de arranque y ~121&nbsp;MB de PSS son altos para una app de listas/CRUD simple. Ambos números corresponden a un <b>build debug</b> (Hermes sin bytecode precompilado, dev menu y conexión a Metro activos), comportamiento conocido por inflar arranque y memoria frente a producción.</p>
+<p><b>Propuesta:</b> repetir la medición sobre build <b>release</b> (<code>npx expo run:android --variant release</code>) para aislar cuánto del costo actual es real y cuánto es artefacto del entorno de desarrollo.</p>
+
+<h2>2. Análisis de seguridad — OWASP Mobile Top 10</h2>
+<p>Revisión de código real sobre <code>src/</code>, sin herramientas externas (MobSF/ZAP no configuradas en esta pasada).</p>
+<table>
+<tr><th>Punto OWASP</th><th>Cumple</th><th>Hallazgo</th><th>Corrección</th></tr>
+<tr><td><b>M4</b> – Insufficient Input/Output Validation</td><td class="badge-no">No cumplía</td><td><code>taskService.ts</code> hacía <code>res.json()</code> sin validar el shape, pese a existir <code>TaskSchema</code>/<code>TaskListSchema</code> sin usar en runtime.</td><td><b>Corregido en esta entrega:</b> <code>fetchTasks</code>/<code>createTask</code> ahora parsean con <code>.parse()</code> de Zod y rechazan si no cumple el contrato.</td></tr>
+<tr><td><b>M5</b> – Insecure Communication</td><td class="badge-warn">Parcial</td><td>HTTPS hardcoded (correcto), pero sin <code>AbortController</code>/timeout ni política ATS explícita en <code>app.json</code>.</td><td>Agregar <code>AbortController</code> con timeout; declarar ATS explícito si se distribuye a producción.</td></tr>
+<tr><td><b>M9</b> – Insecure Data Storage</td><td class="badge-ok">No aplica</td><td>No hay <code>AsyncStorage</code>/<code>SecureStore</code>; el estado vive solo en memoria (confirmado en todo <code>src/</code>).</td><td>Sin acción; a futuro usar <code>expo-secure-store</code> para cualquier dato sensible.</td></tr>
+<tr><td><b>M2</b> – Inadequate Supply Chain (extra)</td><td class="badge-no">No cumplía</td><td><code>npm audit</code> real: <b>25 vulnerabilidades (7 moderate, 18 high)</b>, concentradas en tooling de Expo.</td><td>Planificar <code>npm audit fix</code> y revisar breaking changes antes de <code>--force</code>.</td></tr>
+</table>
+
+<h2>3. Pruebas de contrato de API con Zod</h2>
+<p><code>src/schemas/taskSchema.ts</code> (ya existente, reutilizado sin cambios) define <code>TaskSchema</code> (id, title, status: pending/completed, createdAt opcional) y <code>TaskListSchema</code>. <b>Aporte de esta entrega:</b> se cableó ese esquema en <code>taskService.ts</code> (hallazgo M4) y se agregaron 4 pruebas nuevas contra el servicio real (mockeado con MSW, mismo patrón del proyecto):</p>
+<table>
+<tr><th>Prueba</th><th>Qué verifica</th></tr>
+<tr><td><code>fetchTasks()</code> — respuesta válida</td><td>Resuelve con los datos cuando cumple el contrato.</td></tr>
+<tr><td><code>fetchTasks()</code> — respuesta inválida (sin <code>title</code>)</td><td>Rechaza (<code>rejects.toThrow</code>) en vez de propagar datos corruptos.</td></tr>
+<tr><td><code>createTask()</code> — respuesta válida</td><td>Resuelve con la tarea creada cuando cumple el contrato.</td></tr>
+<tr><td><code>createTask()</code> — <code>status</code> fuera del enum (<code>'archived'</code>)</td><td>Rechaza — el enum de Zod bloquea valores no contemplados.</td></tr>
+</table>
+<p>Suite completa: <b>64 pruebas, 15 suites, todas en verde</b>; cobertura global 94.17%&nbsp;stmts / 93.61%&nbsp;branches / 90%&nbsp;funciones / 95.29%&nbsp;líneas (umbral mínimo: 70% en las 4 métricas).</p>
+
+<h2>4. Pipeline de integración continua</h2>
+<p><code>.github/workflows/tests.yml</code> ya existía con un job básico; extendido en esta entrega: <b>trigger ampliado</b> a ramas <code>actividad-**</code> además de <code>main</code>/<code>develop</code>; <b>step de lint</b> (<code>npx eslint .</code>) antes de los tests; <b>artifact de cobertura</b> (<code>actions/upload-artifact@v4</code> sobre <code>coverage/</code>). El umbral de 70% ya estaba configurado en <code>jest.config.js</code> y Jest lo hace fallar nativamente si no se cumple.</p>
+<p class="note">Hallazgo real durante esta entrega: el primer push falló en CI (no en local) porque el test de integración <code>CreateTaskScreen.test.tsx</code> superó el timeout default de Jest (5000&nbsp;ms) en el runner de GitHub Actions, más lento que el equipo de desarrollo (siempre corre en &lt;1&nbsp;s local). Se corrigió subiendo <code>testTimeout</code> a 10000&nbsp;ms en <code>jest.config.js</code>, y la corrida siguiente pasó en verde — evidencia adjunta en <code>evidencias/github-actions-run.png</code>.</p>
+
+<h2>5. Conclusión</h2>
+<p>Esta entrega cubre los cuatro frentes pedidos: rendimiento medido con datos reales de <code>adb</code> con un cuello de botella identificado y su propuesta de verificación en release; seguridad revisada contra 4 puntos de OWASP Mobile Top 10 con una corrección real aplicada (M4); contrato de API reforzado con validación runtime real y 4 pruebas nuevas; y CI/CD extendido con lint, artifact de cobertura y trigger por rama, depurado hasta lograr una corrida real y verde en GitHub Actions.</p>
+
+</body>
+</html>
