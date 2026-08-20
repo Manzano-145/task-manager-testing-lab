@@ -37,6 +37,10 @@ module.exports = {
   coverageThreshold: {
     global: { branches: 70, functions: 70, lines: 70, statements: 70 },
   },
+  // entrega-actividad-4/ ships a copy of the contract test as a deliverable
+  // artifact, not a real suite to run — without this Jest's default testMatch
+  // picks it up too and it fails (it doesn't carry the full src/ tree).
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/entrega-actividad-4/'],
   // default 5000ms timed out CreateTaskScreen's async integration test on the
   // GitHub Actions runner (slower than local dev machine) even though it always
   // passed locally; 10s gives async fetch+render tests enough margin in CI.

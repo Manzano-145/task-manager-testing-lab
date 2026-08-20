@@ -1,9 +1,0 @@
-appId: com.taskmanager.app
----
-- launchApp
-- assertVisible: "Nueva tarea"
-- tapOn:
-    id: "input-titulo"
-- inputText: "Mi primera tarea de prueba"
-- tapOn: "Guardar"
-- assertVisible: "Tarea creada exitosamente"
