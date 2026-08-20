@@ -37,4 +37,8 @@ module.exports = {
   coverageThreshold: {
     global: { branches: 70, functions: 70, lines: 70, statements: 70 },
   },
+  // default 5000ms timed out CreateTaskScreen's async integration test on the
+  // GitHub Actions runner (slower than local dev machine) even though it always
+  // passed locally; 10s gives async fetch+render tests enough margin in CI.
+  testTimeout: 10000,
 };
