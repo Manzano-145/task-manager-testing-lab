@@ -25,6 +25,9 @@
   .badge-ok { color: #1a7a1a; font-weight: bold; }
   .badge-warn { color: #a06a00; font-weight: bold; }
   .badge-no { color: #a01a1a; font-weight: bold; }
+  .evidence { margin: 6pt 0 10pt 0; page-break-inside: avoid; }
+  .evidence img { width: 100%; border: 1px solid #999; display: block; }
+  .evidence .cap { font-size: 9.5pt; color: #444; margin-top: 2pt; }
 </style>
 </head>
 <body>
@@ -68,7 +71,21 @@
 <p><code>.github/workflows/tests.yml</code> ya existía con un job básico; extendido en esta entrega: <b>trigger ampliado</b> a ramas <code>actividad-**</code> además de <code>main</code>/<code>develop</code>; <b>step de lint</b> (<code>npx eslint .</code>) antes de los tests; <b>artifact de cobertura</b> (<code>actions/upload-artifact@v4</code> sobre <code>coverage/</code>). El umbral de 70% ya estaba configurado en <code>jest.config.js</code> y Jest lo hace fallar nativamente si no se cumple.</p>
 <p class="note">Hallazgo real durante esta entrega: el primer push falló en CI (no en local) porque el test de integración <code>CreateTaskScreen.test.tsx</code> superó el timeout default de Jest (5000&nbsp;ms) en el runner de GitHub Actions, más lento que el equipo de desarrollo (siempre corre en &lt;1&nbsp;s local). Se corrigió subiendo <code>testTimeout</code> a 10000&nbsp;ms en <code>jest.config.js</code>, y la corrida siguiente pasó en verde — evidencia adjunta en <code>evidencias/github-actions-run.png</code>.</p>
 
-<h2>5. Conclusión</h2>
+<h2>5. Evidencia de ejecución en GitHub Actions</h2>
+<div class="evidence">
+  <img src="evidencias/test_suite_ejecutadas.png" alt="Ruta de Actions con las corridas del workflow">
+  <p class="cap">Ruta <b>Actions → Test Suite</b> del repositorio, con el historial de corridas sobre la rama <code>actividad-4-qa</code>.</p>
+</div>
+<div class="evidence">
+  <img src="evidencias/test_ejecuta_correctamente.png" alt="Ejecución exitosa del job test">
+  <p class="cap">Corrida exitosa (<b>Success</b>, 48s) del commit con el fix de <code>testTimeout</code> — job <code>test</code> en verde.</p>
+</div>
+<div class="evidence">
+  <img src="evidencias/Metricas_test.png" alt="Log de Jest con las métricas de cobertura">
+  <p class="cap">Log real del step <b>Ejecutar pruebas con cobertura</b>: 15 suites en verde y métricas de cobertura por archivo.</p>
+</div>
+
+<h2>6. Conclusión</h2>
 <p>Esta entrega cubre los cuatro frentes pedidos: rendimiento medido con datos reales de <code>adb</code> con un cuello de botella identificado y su propuesta de verificación en release; seguridad revisada contra 4 puntos de OWASP Mobile Top 10 con una corrección real aplicada (M4); contrato de API reforzado con validación runtime real y 4 pruebas nuevas; y CI/CD extendido con lint, artifact de cobertura y trigger por rama, depurado hasta lograr una corrida real y verde en GitHub Actions.</p>
 
 </body>
