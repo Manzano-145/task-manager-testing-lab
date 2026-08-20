@@ -2,7 +2,7 @@ name: Test Suite
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'actividad-**']
   pull_request:
     branches: [main]
 
@@ -23,5 +23,14 @@ jobs:
       - name: Instalar dependencias
         run: npm ci --legacy-peer-deps
 
+      - name: Ejecutar linter
+        run: npx eslint .
+
       - name: Ejecutar pruebas con cobertura
         run: npx jest --coverage --ci
+
+      - name: Subir reporte de cobertura
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
